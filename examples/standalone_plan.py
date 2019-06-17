@@ -20,11 +20,15 @@ R = data.Relation(config).load_csv(filename, ',')
 # Choose reduced domain for relation
 domain = (10, 1, 7, 1, 1)
 
+# from pycallgraph import PyCallGraph
+# from pycallgraph.output import GraphvizOutput
+
+# with PyCallGraph(output=GraphvizOutput(output_file='standalone.dot', output_format="dot")):
 # Vectorize relation
 x = transformation.Vectorize('CPS', reduced_domain=domain).transform(R)
 
 # Setup arbitrary constants for MWEM
-seed = 0
+seed = 10
 ratio = 0.5
 rounds = 3
 data_scale = 1e5
@@ -32,10 +36,10 @@ use_history = True
 epsilon = 0.1
 
 # Create query workload
-W = workload.RandomRange(None, (np.prod(domain),), 25)
+W = workload.RandomRange(None, (np.prod(domain),), 25, seed=seed)
 
 # Calculate noisy estimate of x
 x_hat = standalone.Mwem(ratio, rounds, data_scale, domain, use_history).Run(W, x, epsilon, seed)
 
 # Report noisy query responses
-print(W.get_matrix() * x_hat)
+print(W.matrix * x_hat)

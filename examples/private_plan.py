@@ -30,6 +30,11 @@ R = cservice.ProtectedDataSource(kernel_service)
 # Choose reduced domain for relation
 domain = (10, 1, 7, 1, 1)
 
+# If want callgraph
+# from pycallgraph import PyCallGraph
+# from pycallgraph.output import GraphvizOutput
+
+# with PyCallGraph(output=GraphvizOutput(output_file='private.dot', output_type='dot')):
 # Vectorize relation
 x = R.vectorize(domain)
 
@@ -44,7 +49,7 @@ epsilon = eps_total / 2
 W = workload.RandomRange(None, (np.prod(domain),), 25)
 
 # Calculate noisy estimate of x
-x_hat = private.Mwem(domain, ratio, rounds, data_scale, use_history).Run(W, x, epsilon)
+x_hat = private.Mwem(ratio, rounds, data_scale, domain, use_history).Run(W, x, epsilon)
 
 # Report noisy query responses
-print(W.get_matrix() * x_hat)
+print(W.matrix * x_hat)
